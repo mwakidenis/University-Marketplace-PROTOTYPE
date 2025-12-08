@@ -1,0 +1,15 @@
+# Node.js dependencies
+node_modules/
+npm-debug.log
+package-lock.json
+
+# Environment variables
+.env
+
+# Logs
+logs/
+*.log
+
+# System files
+.DS_Store
+Thumbs.db

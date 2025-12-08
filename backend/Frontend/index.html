@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KuzaMarket College Marketplace</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.10.5/cdn.min.js" defer></script>
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .item-card {
+      animation: fadeIn 0.5s ease-out forwards;
+      animation-delay: calc(var(--animation-order) * 0.1s);
+      opacity: 0;
+    }
+    .pulse-button {
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-r from-purple-50 to-blue-50 min-h-screen">
+  <header class="bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg">
+    <div class="container mx-auto px-4 py-6">
+      <div class="flex justify-between items-center">
+        <h1 class="text-3xl font-bold">Kuza<span class="text-yellow-400">Market</span></h1>
+        <a href="post-item.html" class="bg-yellow-400 hover:bg-yellow-300 text-blue-900 font-bold py-2 px-6 rounded-full transition-all duration-300 transform hover:scale-105 pulse-button">
+          + Post Item
+        </a>
+      </div>
+      <p class="mt-2 text-blue-100">Find, sell, connect - campus style!</p>
+    </div>
+  </header>
+
+  <main class="container mx-auto px-4 py-8" x-data x-init="fetchItems()">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <template x-for="(item, index) in Alpine.store('items')" :key="item._id">
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 item-card" :style="`--animation-order: ${index}`">
+          <img 
+            :src="item.image && item.image !== 'null' ? item.image : '/defaultimage.jpg'" 
+            :alt="item.name" 
+            class="w-full h-48 object-cover"
+            onerror="this.onerror=null;this.src='/defaultimage.jpg';"
+          >
+          <div class="p-4 space-y-2">
+            <div class="flex justify-between items-start">
+              <h2 class="text-xl font-bold text-gray-800" x-text="item.name"></h2>
+              <span class="text-lg font-bold text-green-600" x-text="`$${item.price}`"></span>
+            </div>
+            <div class="flex justify-between items-center">
+              <a :href="`item.html?id=${item._id}`" class="text-blue-600 hover:text-blue-800 text-sm font-medium">View Details</a>
+              <a :href="`https://wa.me/${item.contact}?text=Hi! I'm interested in your ${item.name} on College Marketplace`" class="bg-green-500 hover:bg-green-600 text-white py-1 px-4 rounded-lg text-sm font-medium transition-colors duration-300">
+                Contact Seller
+              </a>
+            </div>
+            <div class="flex justify-between items-center pt-2">
+              <a :href="`edit-item.html?id=${item._id}`" class="bg-blue-500 hover:bg-blue-600 text-white text-xs font-medium py-1 px-3 rounded-full transition-all duration-200">
+                Edit
+              </a>
+              <button @click="deleteItem(item._id)" class="bg-red-500 hover:bg-red-600 text-white text-xs font-medium py-1 px-3 rounded-full transition-all duration-200">
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      </template>
+    </div>
+  </main>
+
+  <footer class="bg-gray-800 text-white py-6 mt-8">
+    <div class="container mx-auto px-4 text-center">
+      <p>© 2025 College Marketplace - Connect with your campus comrades!</p>
+      <div class="mt-2 flex justify-center space-x-4">
+        <a href="#" class="text-blue-300 hover:text-blue-100">About</a>
+        <a href="#" class="text-blue-300 hover:text-blue-100">Terms</a>
+        <a href="#" class="text-blue-300 hover:text-blue-100">Privacy</a>
+        <a href="#" class="text-blue-300 hover:text-blue-100">Contact</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener("alpine:init", () => {
+      Alpine.store("items", []);
+    });
+
+    async function fetchItems() {
+      try {
+        const response = await fetch('/api/products');
+        const data = await response.json();
+        console.log("Fetched products:", data);
+        Alpine.store("items", data.products || []);
+      } catch (error) {
+        console.error('Error fetching items:', error);
+      }
+    }
+
+    async function deleteItem(id) {
+      if (!confirm('Are you sure you want to delete this item?')) return;
+      try {
+        const res = await fetch(`/api/products/delete/${id}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (data.success) {
+          Alpine.store("items", Alpine.store("items").filter(item => item._id !== id));
+        } else {
+          alert('Delete failed: ' + data.message);
+        }
+      } catch (err) {
+        console.error('Failed to delete item:', err);
+      }
+    }
+  </script>
+</body>
+</html>

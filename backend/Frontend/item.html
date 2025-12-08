@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Item Details - KuzaMarket</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.10.5/cdn.min.js" defer></script>
+  <style>
+    @keyframes slideIn {
+      from { transform: translateY(30px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .slide-in {
+      animation: slideIn 0.5s ease forwards;
+    }
+    .image-container:hover .zoom-effect {
+      transform: scale(1.05);
+      transition: transform 0.5s ease;
+    }
+    .zoom-effect {
+      transition: transform 0.5s ease;
+    }
+    .pulse-button {
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-r from-purple-50 to-blue-50 min-h-screen">
+  <header class="bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg">
+    <div class="container mx-auto px-4 py-6">
+      <div class="flex justify-between items-center">
+        <h1 class="text-3xl font-bold">Kuza<span class="text-yellow-400">Market</span></h1>
+        <a href="post-item.html" class="bg-yellow-400 hover:bg-yellow-300 text-blue-900 font-bold py-2 px-6 rounded-full transition-all duration-300 transform hover:scale-105 pulse-button">
+          + Post Item
+        </a>
+      </div>
+      <p class="mt-2 text-blue-100">Find, sell, connect - campus style!</p>
+    </div>
+  </header>
+  <main class="container mx-auto px-4 py-8" x-data="{ 
+    item: {
+      name: '',
+      price: '',
+      description: '',
+      contact: '',
+      image: '',
+      postedDate: ''
+    },
+    recommendations: [],
+    loading: true,
+    init() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const id = urlParams.get('id');
+  
+      if (!id) {
+        console.error('❌ No ID in URL');
+        this.loading = false;
+        return;
+      }
+  
+      fetch(`/api/products/${id}`)
+        .then(res => res.json())
+        .then(data => {
+          if (!data || !data._id) {
+            console.error('❌ Invalid product response:', data);
+            this.item = {
+              name: 'Unknown',
+              price: 'N/A',
+              description: 'No description available',
+              contact: '',
+              image: '/defaultimage.jpg',
+              postedDate: ''
+            };
+          } else {
+            this.item = {
+              name: data.name || 'Unknown',
+              price: data.price || 'N/A',
+              description: data.description || 'No description available',
+              contact: data.contact || '',
+              image: data.image && data.image !== 'null' ? data.image : '/defaultimage.jpg',
+              postedDate: data.createdAt || ''
+            };
+          }
+          this.loading = false;
+          this.fetchRecommendedItems(id);
+        })
+        .catch(err => {
+          console.error('Error fetching item details:', err);
+          this.loading = false;
+        });
+    },
+    fetchRecommendedItems(id) {
+      fetch(`/api/products`)
+        .then(res => res.json())
+        .then(data => {
+          this.recommendations = (data.products || []).filter(p => p._id !== id).slice(0, 4);
+        })
+        .catch(err => console.error('Error fetching recommended items:', err));
+    }
+  }">
+  
+    <div x-show="loading" class="flex justify-center items-center py-20">
+      <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+    </div>
+
+    <div x-show="!loading && item" class="max-w-6xl mx-auto" x-cloak>
+      <nav class="text-sm mb-6">
+        <a href="index.html" class="text-blue-600 hover:text-blue-800">Home</a>
+        <span class="mx-2">›</span>
+        <span class="text-gray-600" x-text="item.name || 'Item'"></span>
+      </nav>
+
+      <div class="bg-white rounded-xl shadow-xl overflow-hidden">
+        <div class="md:flex">
+          <div class="md:w-1/2 image-container overflow-hidden">
+            <img :src="item.image && item.image !== 'null' ? item.image : '/defaultimage.jpg'" :alt="item.name" class="w-full h-full object-cover zoom-effect">
+          </div>
+          <div class="md:w-1/2 p-6 md:p-8 slide-in">
+            <div class="flex items-center mb-2">
+              <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">For Sale</span>
+              <span class="ml-2 text-sm text-gray-500" x-text="item.postedDate || 'Recently added'"></span>
+            </div>
+
+            <h1 class="text-3xl font-bold text-gray-800 mb-2" x-text="item.name || 'No Title'"></h1>
+            <p class="text-2xl font-bold text-green-600 mb-6" x-text="item.price ? `$${item.price}` : 'N/A'"></p>
+
+            <div class="mb-6">
+              <h2 class="text-lg font-medium text-gray-800 mb-2">Description</h2>
+              <p class="text-gray-600" x-text="item.description || 'No description provided.'"></p>
+            </div>
+
+            <a :href="item.contact ? `https://wa.me/${item.contact}?text=Hi! I'm interested in your ${item.name} on College Marketplace` : '#'" 
+              class="block w-full bg-green-500 hover:bg-green-600 text-white text-center py-3 px-4 rounded-lg text-lg font-medium transition-colors duration-300 pulse-button">
+              Contact Seller via WhatsApp
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recommended Items Section -->
+      <div class="mt-12" x-show="recommendations.length > 0">
+        <h2 class="text-2xl font-bold text-gray-800 mb-6">You might also like</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <template x-for="recommended in recommendations" :key="recommended._id">
+            <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-300">
+              <img :src="recommended.image && recommended.image !== 'null' ? recommended.image : '/defaultimage.jpg'" :alt="recommended.name" class="w-full h-40 object-cover">
+              <div class="p-4">
+                <h3 class="text-lg font-bold text-gray-800" x-text="recommended.name"></h3>
+                <p class="text-green-600 font-bold" x-text="recommended.price ? `$${recommended.price}` : 'N/A'"></p>
+                <a :href="`item.html?id=${recommended._id}`" class="mt-2 text-blue-600 hover:text-blue-800 text-sm">View Details</a>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="bg-gray-800 text-white py-6 mt-8">
+    <div class="container mx-auto px-4 text-center">
+      <p>© 2025 College Marketplace - Connect with your campus comrades!</p>
+    </div>
+  </footer>
+</body>
+</html>
