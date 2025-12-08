@@ -35,7 +35,7 @@ cd college-marketplace
 ### 📬 Contributing
 👨‍💻 Want to improve the marketplace? Fork this repo, make changes, and submit a PR!
 
-**This is the initial prototype of Kuza Market. Advanced features have been implemented in the repository https://github.com/mwakidenis/University-Marketplace**
+**This is the initial prototype of Kuza Market. Advanced features have been implemented in my latest repository here https://github.com/mwakidenis/University-Marketplace**
 
 **Made with ❤️ by Mwaki Denis**   |     [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-%F0%9F%8D%B5-yellow?style=plastic)](https://wa.me/254798750585)
 
