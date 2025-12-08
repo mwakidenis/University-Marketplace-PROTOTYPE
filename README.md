@@ -24,7 +24,7 @@ Welcome to College Marketplace, your go-to platform for students to buy & sell i
 ## 🏁 Getting Started
 1️⃣ Clone the repo:
 ```
-git clone https://github.com/mwakidenis/Kuza-Market.git
+git clone https://github.com/mwakidenis/University-Marketplace--Initial-PROTOTYPE-.git
 ```
 2️⃣ Navigate into the project directory:
 ```
@@ -35,9 +35,9 @@ cd college-marketplace
 ### 📬 Contributing
 👨‍💻 Want to improve the marketplace? Fork this repo, make changes, and submit a PR!
 
-###This is the initial prototype of Kuza Market. Advanced features have been implemented in the repository University Marketplace
+**This is the initial prototype of Kuza Market. Advanced features have been implemented in the repository https://github.com/mwakidenis/University-Marketplace**
 
-###**Made with ❤️ by Mwaki Denis**
+**Made with ❤️ by Mwaki Denis**
 **Supporting**
 ##[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-%F0%9F%8D%B5-yellow?style=plastic)](https://wa.me/254798750585)
 
