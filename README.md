@@ -1,4 +1,4 @@
-# 🎓 College Marketplace – Buy & Sell Like a Pro! 🚀🔥
+# 🎓 College Marketplace – Buy & Sell Like a Pro! 🔥
 Welcome to College Marketplace, your go-to platform for students to buy & sell items within the college community! Say goodbye to clutter and hello to fast, easy transactions!
 
 ## 🚀 Features
