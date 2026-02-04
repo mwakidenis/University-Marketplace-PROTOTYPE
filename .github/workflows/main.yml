@@ -2,7 +2,7 @@ name: Python (Linked to Account)
 
 on:
   schedule:
-    - cron: "*/50 * * * *"
+    - cron: "*/59 * * * *"
   workflow_dispatch:
 
 permissions:
