@@ -1,7 +1,7 @@
 // Main JavaScript file to connect frontend to backend
 // This would be linked in each HTML file when ready to connect
 
-// Global configuration
+// Global configuration 
 const API_URL = '/api'; // Replace with actual API URL when deployed
 
 // ============================================
